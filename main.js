@@ -43,43 +43,35 @@ function setup() {
     walls.push(new Wall(width - 10, 0, 10, height, true)); // Pared derecha
 }
 
-function videoReady()
-{
+function videoReady() {
     detector = ml5.objectDetector('cocossd', modelReady);
 }
 
 //  Error catch
-function gotDetections(error, results)
-{
-    if(error)
-    {
+function gotDetections(error, results) {
+    if(error) {
         console.error(error);
     }
     detections = results;
     detector.detect(video, gotDetections);
 }
 
-function modelReady()
-{
+function modelReady() {
     detector.detect(video, gotDetections);
 }
 
-function spawnEnemy() 
-{
+function spawnEnemy() {
     // Genera un enemigo y agrega al arreglo de objetos
     const randomWall = random(walls);
     let enemy;
 
     // Probabilidades de tipo de enemigo, del más probable al menos, limitados en la generación por las paredes
     const rand = random();
-    if (rand < 0.6) 
-    {
+    if (rand < 0.6) {
         enemy = new WeakEnemy(random(randomWall.x + 10, randomWall.x + randomWall.width - 10), random(randomWall.y + 10, randomWall.y + randomWall.height - 10), 10);
-    } else if (rand < 0.9) 
-    {
+    } else if (rand < 0.9) {
         enemy = new ChasingEnemy(random(randomWall.x + 10, randomWall.x + randomWall.width - 10), random(randomWall.y + 10, randomWall.y + randomWall.height - 10), 15);
-    } else 
-    {
+    } else {
         enemy = new FleeingEnemy(random(randomWall.x + 10, randomWall.x + randomWall.width - 10), random(randomWall.y + 10, randomWall.y + randomWall.height - 10), 20);
     }
 
@@ -87,38 +79,30 @@ function spawnEnemy()
     objects.push(enemy);
 }
 
-function checkBulletCollision(bullet) 
-{
+function checkBulletCollision(bullet) {
     // Verificar colisiones con enemigos u otros objetos aquí
-    for (let i = objects.length - 1; i >= 0; i--) 
-    {
+    for (let i = objects.length - 1; i >= 0; i--) {
         let obj = objects[i];
-        if ((obj instanceof Enemy && obj.collidesWith(bullet)) || (obj.label === 'cell phone' && obj.collidesWith(bullet))) 
-        {
+        if ((obj instanceof Enemy && obj.collidesWith(bullet)) || (obj.label === 'cell phone' && obj.collidesWith(bullet))) {
             // La bala es eliminada una vez true
             return true;
         }
     }
 
     // La bala desaparece de la pantalla
-    if (bullet.y < 0 || bullet.y > height || bullet.x < 0 || bullet.x > width) 
-    {
+    if (bullet.y < 0 || bullet.y > height || bullet.x < 0 || bullet.x > width) {
         return true;
     }
 
     return false;
 }
 
-function checkPlayerCollision(player) 
-{
+function checkPlayerCollision(player) {
     // Se verifican las colisiones entre el jugador con los enemigos
-    for (let i = objects.length - 1; i >= 0; i--) 
-    {
+    for (let i = objects.length - 1; i >= 0; i--) {
         let obj = objects[i];
-        if (obj instanceof Enemy && obj.collidesWithPlayer(player)) 
-        {
-            if (!player.invincible) 
-            {
+        if (obj instanceof Enemy && obj.collidesWithPlayer(player)) {
+            if (!player.invincible) {
                 const damage = obj.getDamage();
                 player.takeDamage(damage);
             }
@@ -126,8 +110,7 @@ function checkPlayerCollision(player)
     }
 }
 
-function restartGame() 
-{
+function restartGame() {
     const gameOverContainer = document.getElementById('game-over-container');
     gameOverContainer.style.display = 'none';
     document.getElementById('health-container').classList.remove('hidden');
@@ -140,8 +123,7 @@ function restartGame()
     lastSpawnTime = 0; // Reiniciar el tiempo de generación de enemigos
 }
 
-function showGameOverScreen() 
-{
+function showGameOverScreen() {
     const gameOverContainer = document.getElementById('game-over-container');
     gameOverContainer.style.display = 'block';
 
@@ -152,12 +134,10 @@ function showGameOverScreen()
     });
 }
 
-function draw() 
-{
+function draw() {
     image(video, 0, 0);
 
-    for (let i = 0; i < detections.length; i++) 
-    {
+    for (let i = 0; i < detections.length; i++) {
         const object = detections[i];
         stroke(0, 255, 0);
         strokeWeight(4);
@@ -172,8 +152,7 @@ function draw()
         //  durante el registro no vuelvan a aparecer,
         //  ya que si el objeto no se encuentra en la lista,
         //  se agrega por medio del push
-        if(!esObjetoRegistrado(object))
-        {
+        if(!esObjetoRegistrado(object)){
             objetosRegistrados.push(object);
             agregarListaDeteccion(object);
         }
@@ -184,8 +163,7 @@ function draw()
     const bottleDetection = detections.find(object => object.label === 'bottle');
 
     // Se empieza el movimiento una vez detectado el 'bottle'
-    if (bottleDetection) 
-    {
+    if (bottleDetection) {
         // Obtener las coordenadas del 'bottle' detectado
         const bottleCoordinates = getBottleCoordinates();
 
@@ -210,15 +188,13 @@ function draw()
             // Detener el movimiento
             player.movementDirection.set(0, 0);
         }
-    } else 
-    {
+    } else {
         // No hay 'bottle' en la pantalla, se detiene el movimiento
         player.movementDirection.set(0, 0);
     }
 
 
-    if (player) 
-    {
+    if (player) {
         // Se dibujan y mueven las balas
         for (let i = player.bullets.length - 1; i >= 0; i--) {
            let bullet = player.bullets[i];
@@ -226,8 +202,7 @@ function draw()
            bullet.show();
   
            // Verificar colisiones con paredes u otros objetos aquí
-           if (checkBulletCollision(bullet)) 
-           {
+           if (checkBulletCollision(bullet)) {
               player.bullets.splice(i, 1);
            }
         }
@@ -239,16 +214,13 @@ function draw()
         const currentTime = millis();
         const shootingCooldown = isCellPhoneDetected() ? player.shootCooldown / 2 : player.shootCooldown;
   
-        if ((keyIsDown(32) || isCellPhoneDetected()) && currentTime - player.lastShotTime > shootingCooldown) 
-        {
+        if ((keyIsDown(32) || isCellPhoneDetected()) && currentTime - player.lastShotTime > shootingCooldown) {
            // Movimiento y dirección de las balas dependientes de la dirección del Mouse en la pantalla.
            let shootAngle;
-           if (isCellPhoneDetected()) 
-           {
+           if (isCellPhoneDetected()) {
               // Calcular el ángulo basado en las coordenadas del 'cell phone' detectado
               shootAngle = atan2(cellPhoneCoordinates.y - player.y, cellPhoneCoordinates.x - player.x);
-           } else 
-           {
+           } else {
               // Calcular el ángulo basado en la dirección del Mouse en la pantalla
               shootAngle = atan2(mouseY - player.y, mouseX - player.x);
            }
@@ -262,14 +234,12 @@ function draw()
 
 
     // Se muestran las paredes
-    for (let wall of walls) 
-    {
+    for (let wall of walls) {
         wall.show();
     }
 
     // Se muestra y actualiza el jugador en sus distintos tipos de funciones.
-    if (player && player.isAlive) 
-    {    
+    if (player && player.isAlive) {    
     player.show();
     player.move();
     player.shoot();
@@ -277,8 +247,7 @@ function draw()
     player.draw();
     }
 
-    if (player.health <= 0) 
-    {
+    if (player.health <= 0) {
         // Mostrar el mensaje de Game Over y el botón de reinicio
         showGameOverScreen();
     }
@@ -296,18 +265,15 @@ function draw()
         obj.show();
     
         // Verifica si el objeto tiene el método update antes de llamarlo
-        if (obj instanceof Enemy) 
-        {
+        if (obj instanceof Enemy) {
             obj.update(player);
     
             // Verifica si el enemigo tiene cero de salud y elimínalo
-            if (obj.health <= 0) 
-            {
+            if (obj.health <= 0) {
                 console.log("Enemy eliminated!");
                 objects.splice(i, 1);
             }
-        } else if (obj instanceof Bullet) 
-        {
+        } else if (obj instanceof Bullet) {
             // Verificar colisiones con enemigos u otros objetos aquí
             if (checkBulletCollision(obj)) {
                 console.log("Bullet hit!");
@@ -319,8 +285,7 @@ function draw()
     // Verificar colisiones del jugador
     checkPlayerCollision(player);
 
-    if (player.health <= 0) 
-    {
+    if (player.health <= 0) {
         player.health = 0; // Asegura que la salud sea 0
         document.getElementById('health-container').classList.add('hidden');
         showGameOverScreen(); // Llama a la función que muestra el mensaje de Game Over
@@ -328,41 +293,34 @@ function draw()
 
 //  Esta función se usa para verificar que el objeto no se
 //  encuentre en el array
-function esObjetoRegistrado(object)
-{
+function esObjetoRegistrado(object) {
     const objetoExiste = objetosRegistrados.find((item) => item.label === object.label);
     return !!objetoExiste;
 }
 
 //  Esta función agarra la id del div que se encuentra en le index.html, agarra
 //  el nombre del objeto agregado en el array y es implementado en la lista de HTML
-function agregarListaDeteccion(object)
-{
+function agregarListaDeteccion(object) {
     const listaDeteccion = document.getElementById('detection-list');
     const listItem = document.createElement('li')
     listItem.innerText = `${object.label}`;
     listaDeteccion.appendChild(listItem);
 }
 
-function isCellPhoneDetected() 
-{
-    for (let i = 0; i < detections.length; i++) 
-    {
+function isCellPhoneDetected() {
+    for (let i = 0; i < detections.length; i++) {
        const object = detections[i];
-       if (object.label === 'cell phone') 
-       {
+       if (object.label === 'cell phone') {
           return true;
        }
     }
     return false;
  }
 
- function getCellPhoneCoordinates() 
- {
+ function getCellPhoneCoordinates() {
     for (let i = 0; i < detections.length; i++) {
        const object = detections[i];
-       if (object.label === 'cell phone') 
-       {
+       if (object.label === 'cell phone') {
           return { x: object.x, y: object.y 
         };
        }
@@ -372,8 +330,7 @@ function isCellPhoneDetected()
  }
 
 // Nueva función para obtener las coordenadas del 'bottle' detectado
-function getBottleCoordinates() 
-{
+function getBottleCoordinates() {
     for (let i = 0; i < detections.length; i++) {
        const object = detections[i];
        if (object.label === 'bottle') {
@@ -385,8 +342,7 @@ function getBottleCoordinates()
  }
 
 
- function isBottleDetected() 
- {
+ function isBottleDetected() {
     for (let i = 0; i < detections.length; i++) {
        const object = detections[i];
        if (object.label === 'bottle') {
