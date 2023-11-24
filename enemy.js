@@ -1,6 +1,5 @@
 //  Se crea una subclase de GameObject que identifica nuevos valores en los enemigos
-class Enemy extends GameObject 
-{
+class Enemy extends GameObject {
     constructor(x, y, radius, color, health) 
     {
         super(x, y, radius * 2, radius * 2, color);
@@ -33,8 +32,7 @@ class Enemy extends GameObject
     }
 }
 
-class WeakEnemy extends Enemy
-{
+class WeakEnemy extends Enemy {
     constructor(x, y, radius) {
         fill(0, 0, 0)   //  Círculo negro
         super(x, y, radius * 2, radius * 2, color(0));  
@@ -95,8 +93,7 @@ class WeakEnemy extends Enemy
 
 }
 
-class ChasingEnemy extends Enemy 
-{
+class ChasingEnemy extends Enemy {
     constructor(x, y, radius) 
     {
         fill(255, 0, 0);    //  Círculo rojo
@@ -138,8 +135,7 @@ class ChasingEnemy extends Enemy
 
 }
 
-class FleeingEnemy extends Enemy 
-{
+class FleeingEnemy extends Enemy {
     constructor(x, y, radius) 
     {
         fill(0, 255, 255);  //  Círculo celeste
