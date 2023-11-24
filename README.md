@@ -1,4 +1,4 @@
-# Juego ML5 con Objectos< </br>
+# Juego ML5 con Objectos </br>
 Proyecto realizado por Agustín Moya y Sergio Venegas
 
 Segundo proyecto de Electivo de Inteligencia Artificial </hr>
