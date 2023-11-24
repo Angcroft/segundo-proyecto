@@ -1,20 +1,17 @@
 //  Se crea una subclase de GameObject que identifica nuevos valores en los enemigos
 class Enemy extends GameObject {
-    constructor(x, y, radius, color, health) 
-    {
+    constructor(x, y, radius, color, health) {
         super(x, y, radius * 2, radius * 2, color);
         this.radius = radius;
         this.health = health;
     }
 
-    show() 
-    {
+    show() {
         fill(this.color);
         ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
     }
 
-    collidesWith(bullet) 
-    {
+    collidesWith(bullet) {
         console.log("Checking collision with bullet. Bullet Damage:", bullet.damage);
         
         // Verificar si la bala colisiona con el enemigo
@@ -41,12 +38,10 @@ class WeakEnemy extends Enemy {
         this.health = 10;
     }
 
-    moveRandomly()
-    {
+    moveRandomly(){
         const choice = floor(random(4));  // 0: arriba, 1: abajo, 2: izquierda, 3: derecha
 
-        switch (choice) 
-        {
+        switch (choice) {
             case 0:
                 this.y = max(this.y - this.speed, 0);  // Mover hacia arriba
                 break;
@@ -64,13 +59,11 @@ class WeakEnemy extends Enemy {
         }
     }
 
-    getDamage() 
-    {
+    getDamage() {
         return 10;
     }
 
-    collidesWithPlayer(player) 
-    {
+    collidesWithPlayer(player) {
         //  Una forma de asegurarse que no hayan errores es generando la condicional en el caso de que el jugador
         //  sea nulo
         if (player !== null) {
@@ -80,10 +73,8 @@ class WeakEnemy extends Enemy {
         return false;
     }
 
-    update() 
-    {
-        if (player) 
-        {
+    update() {
+        if (player) {
             //  Movimiento en reacción al jugador, como tal tiene le objetivo de imitar a un mosca mientras
             //  se mueve de forma aleatoria
             this.moveRandomly();
@@ -94,8 +85,7 @@ class WeakEnemy extends Enemy {
 }
 
 class ChasingEnemy extends Enemy {
-    constructor(x, y, radius) 
-    {
+    constructor(x, y, radius) {
         fill(255, 0, 0);    //  Círculo rojo
         super(x, y, radius * 2, radius * 2, color(255, 0, 0));  
         this.radius = radius;
@@ -105,21 +95,18 @@ class ChasingEnemy extends Enemy {
 
     //  El enemigo perseguirá al jugador hasta encontrarse en su misma dirección, manteniendose ahí hasta que
     //  uno de los dos muera
-    chasePlayer(player) 
-    {
+    chasePlayer(player) {
         if (player !== null) {
             const angleToPlayer = atan2(player.y - this.y, player.x - this.x);
             this.x += this.speed * cos(angleToPlayer);
             this.y += this.speed * sin(angleToPlayer);
         }
     }
-    getDamage() 
-    {
+    getDamage() {
         return 20;
     }
 
-    collidesWithPlayer(player) 
-    {
+    collidesWithPlayer(player) {
         if (player !== null) {
             const distance = dist(this.x, this.y, player.x, player.y);
             return distance < (this.radius + player.size) / 2;
@@ -127,8 +114,7 @@ class ChasingEnemy extends Enemy {
         return false;
     }
 
-    update(player) 
-    {
+    update(player) {
         this.chasePlayer(player);
     }
 
@@ -136,8 +122,7 @@ class ChasingEnemy extends Enemy {
 }
 
 class FleeingEnemy extends Enemy {
-    constructor(x, y, radius) 
-    {
+    constructor(x, y, radius) {
         fill(0, 255, 255);  //  Círculo celeste
         super(x, y, radius * 2, radius * 2, color(0, 255, 255));  
         this.radius = radius;
@@ -146,8 +131,7 @@ class FleeingEnemy extends Enemy {
         this.health = 60;
     }
 
-    fleeFromPlayer(player) 
-    {
+    fleeFromPlayer(player) {
         if (player) {
             const distanceToPlayer = dist(this.x, this.y, player.x, player.y);
     
@@ -164,13 +148,11 @@ class FleeingEnemy extends Enemy {
         }
     }
 
-    getDamage() 
-    {
+    getDamage() {
         return 30;
     }
 
-    collidesWithPlayer(player) 
-    {
+    collidesWithPlayer(player) {
         if (player !== null) {
             const distance = dist(this.x, this.y, player.x, player.y);
             return distance < (this.radius + player.size) / 2;
@@ -179,8 +161,7 @@ class FleeingEnemy extends Enemy {
     }
 
 
-    update(player) 
-    {
+    update(player) {
         this.fleeFromPlayer(player);
 
     }
